@@ -1,13 +1,12 @@
 ﻿using API.Data;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories;
 
 public class UserRepository : GenaricRepository<User>, IUserRepository
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IDbContext _dbContext;
 
     public UserRepository(IUnitOfWork unitOfWork, IDbContext dbContext)
     {
