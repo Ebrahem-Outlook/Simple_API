@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using API.Core;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -13,14 +14,14 @@ public class ApplicationDbContext : DbContext, IDbContext , IUnitOfWork
         _mediator = mediator;
     }
 
-    public new DbSet<TEntity> Set<TEntity>() where TEntity : class
+    public new DbSet<TEntity> Set<TEntity>() where TEntity : Entity
     {
         return base.Set<TEntity>();
     }
 
-    public async Task<TEntity> GetByIdAsync<TEntity>(Guid id) where TEntity : class
+    public async Task<TEntity> GetByIdAsync<TEntity>(Guid id) where TEntity : Entity
     {
-        var entity = await Set<TEntity>().FindAsync(id);
+        var entity = await Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
         if(entity is null)
         {
             throw new NullReferenceException();
@@ -28,19 +29,24 @@ public class ApplicationDbContext : DbContext, IDbContext , IUnitOfWork
         return entity;
     }
 
-    public void Inster<TEntity>(TEntity entity) where TEntity : class
+    public void Inster<TEntity>(TEntity entity) where TEntity : Entity
     {
         Set<TEntity>().Add(entity);
     }
 
-    public void InsterRange<TEntity>(IReadOnlyCollection<TEntity> entities) where TEntity : class
+    public void InsterRange<TEntity>(IReadOnlyCollection<TEntity> entities) where TEntity : Entity
     {
         Set<TEntity>().AddRange(entities);
     }
 
-    void IDbContext.Remove<TEntity>(TEntity entity)
+    public new void Remove<TEntity>(TEntity entity) where TEntity : Entity
     {
         Set<TEntity>().Remove(entity);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

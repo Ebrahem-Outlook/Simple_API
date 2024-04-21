@@ -4,14 +4,8 @@ namespace API.Interfaces;
 
 public interface IUserRepository
 {
-    // Command
-    void Create(User user);
-    Task<bool> Update(User user);
-    void Delete(Guid userId);
-
-    // Query
-    Task<List<User>> GetAllAsync();
-    Task<User> GetByIdAsync(Guid userId);
-    Task<User> GetByEmailAsync(string userEmail);
-    Task<User> GetByUserNameAsync(string userName);
+    Task<User> GetByEmailAsync(string email);
+    Task<User> GetByUserNameAsync(string email);
+    Task<bool> IsEmailUniqueAsync(string email);
+    Task<bool> IsUserNameUniqueAsync(string userName);
 }
